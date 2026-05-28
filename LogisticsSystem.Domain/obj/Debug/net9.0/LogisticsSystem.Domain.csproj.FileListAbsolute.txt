@@ -1,0 +1,11 @@
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\LogisticsSystem.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\LogisticsSystem.Domain.AssemblyInfoInputs.cache
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\LogisticsSystem.Domain.AssemblyInfo.cs
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\LogisticsSystem.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\bin\Debug\net9.0\LogisticsSystem.Domain.deps.json
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\bin\Debug\net9.0\LogisticsSystem.Domain.dll
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\bin\Debug\net9.0\LogisticsSystem.Domain.pdb
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\LogisticsSystem.Domain.dll
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\refint\LogisticsSystem.Domain.dll
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\LogisticsSystem.Domain.pdb
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.Domain\obj\Debug\net9.0\ref\LogisticsSystem.Domain.dll
