@@ -10,6 +10,7 @@ C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSys
 C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\LogisticsSystem.App.AssemblyInfoInputs.cache
 C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\LogisticsSystem.App.AssemblyInfo.cs
 C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\LogisticsSystem.App.csproj.CoreCompileInputs.cache
+C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\LogisticsSystem.App.sourcelink.json
 C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\Logistic.8F5BC261.Up2Date
 C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\LogisticsSystem.App.dll
 C:\Users\Йохан\Desktop\практика ООП\LogisticsSystem\LogisticsSystem.App\obj\Debug\net9.0\refint\LogisticsSystem.App.dll

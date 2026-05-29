@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using LogisticsSystem.Domain.Entities;
-using LogisticsSystem.Domain.Repositories;
-using LogisticsSystem.Domain.Extensions;
-using LogisticsSystem.Domain.Exceptions;
-using LogisticsSystem.Domain.Utils;
+using LogisticsSystem.Domain.Services;
+using LogisticsSystem.Domain.Contracts;
 
 namespace LogisticsSystem.App;
 
@@ -13,69 +9,117 @@ class Program
 {
     static void Main(string[] args)
     {
+        // cd .\LogisticsSystem\; dotnet run --project LogisticsSystem.App
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-        Console.WriteLine("=== Розділ ІІ. Структури даних, LINQ та Обробка помилок ===");
+        Console.InputEncoding = System.Text.Encoding.UTF8;
+        LogisticsFacade facade = new LogisticsFacade();
 
-        // 1. Тест Generics & Сховища (ПЗ 5)
-        var cargoRepository = new Repository<Cargo>();
-        cargoRepository.Add(new Cargo("Обладнання", 1200, 5));
-        cargoRepository.Add(new Cargo("Текстиль", 200, 2));
-        cargoRepository.Add(new Cargo("Будівельні матеріали", 3500, 10));
+        Console.WriteLine("==================================================================");
+        Console.WriteLine("⚡ СИСТЕМА УПРАВЛІННЯ ЛОГІСТИКОЮ: ВСТАНОВЛЕННЯ ПАРАМЕТРІВ ВАНТАЖУ ⚡");
+        Console.WriteLine("==================================================================");
 
-        Console.WriteLine($"\n[Generics] У сховище додано вантажів: {cargoRepository.GetAll().Count()}");
-
-        // 2. Тест Делегатів Custom ForEach, Map, Reduce (СР 5)
-        var cargos = cargoRepository.GetAll();
-        Console.WriteLine("\n[Делегати] Список вантажів через CustomForEach:");
-        cargos.CustomForEach(c => Console.WriteLine($" - {c.Description}: {c.WeightKg} кг"));
-
-        double totalWeight = cargos.CustomMap(c => c.WeightKg).CustomReduce(0.0, (sum, w) => sum + w);
-        Console.WriteLine($"[Делегати] Загальна вага через Map/Reduce: {totalWeight} кг");
-
-        // 3. Тест LINQ та Extension Methods (ПЗ 7 & СР 7)
-        var heavyCargos = cargos.GetHeavyCargo(1000);
-        Console.WriteLine("\n[LINQ Extension] Вантажі важче 1000 кг:");
-        foreach (var hc in heavyCargos)
-        {
-            Console.WriteLine($" - {hc.Description} ({hc.WeightKg} кг)");
-        }
-
-        // 4. Тест Custom Exception & Retry Policy з експоненційною затримкою (ПЗ 8 & СР 8)
-        Console.WriteLine("\n[Retry Policy] Симуляція запиту до GPS-навігатора через шторм...");
-        int callCount = 0;
+        // ВВЕДЕННЯ ДАНИХ ВАНТАЖУ КОРИСТУВАЧЕМ
+        Console.WriteLine("\n--- КРОК 1: ДАНІ ВАНТАЖУ ---");
         
-        try
-        {
-            string finalRoute = RetryPolicy.Execute(() =>
-            {
-                callCount++;
-                if (callCount < 3) 
-                    throw new RouteNotFoundException("Київ-Чоп"); // Падає перші 2 рази
-                
-                return "Маршрут Київ-Чоп успішно побудовано в об'їзд!";
-            });
-            
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[Успіх] Навігатор відповів: {finalRoute}");
-            Console.ResetColor();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[Катастрофа] Операція остаточно провалена: {ex.Message}");
-        }
+        Console.Write("Введіть назву/опис вантажу: ");
+        string cargoDescription = Console.ReadLine() ?? "Секретний вантаж";
 
-        PrintPerformanceTable();
+        Console.Write("Введіть вагу вантажу (кг): ");
+        double cargoWeight = double.Parse(Console.ReadLine() ?? "500");
+
+        Console.Write("Введіть об'єм вантажу (м³): ");
+        double cargoVolume = double.Parse(Console.ReadLine() ?? "3");
+
+        Console.Write("Введіть оголошену вартість вантажу (грн): ");
+        double cargoPrice = double.Parse(Console.ReadLine() ?? "50000");
+
+        // Створюємо вантаж на основі твоїх даних
+        Cargo userCargo = new Cargo(cargoDescription, cargoWeight, cargoVolume, cargoPrice);
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"\n📦 Вантаж успішно створено: '{userCargo.Description}' ({userCargo.WeightKg} кг)");
+        Console.ResetColor();
+
+
+        // ВВЕДЕННЯ ДАНИХ РЕЙСУ КОРИСТУВАЧЕМ
+        Console.WriteLine("\n--- КРОК 2: НАЛАШТУВАННЯ ПАРАМЕТРІВ РЕЙСУ ---");
+        
+        Console.Write("Введіть тип авто (truck / van): ");
+        string type = Console.ReadLine() ?? "truck";
+
+        Console.Write("Введіть тип тарифу (1 - Стандартний, 2 - Експрес): ");
+        string tariffChoice = Console.ReadLine() ?? "1";
+        
+        // Вибір стратегії тарифу
+        IFinancialStrategy strategy = tariffChoice == "2" 
+            ? new ExpressTariffStrategy() 
+            : new StandardTariffStrategy();
+
+        Console.Write("Введіть відстань рейсу (км): ");
+        double distance = double.Parse(Console.ReadLine() ?? "300");
+
+        Console.Write("Введіть час в дорозі (годин): ");
+        double hours = double.Parse(Console.ReadLine() ?? "5");
+
+        Console.Write("Погодинна ставка водія (грн/год): ");
+        double driverRate = double.Parse(Console.ReadLine() ?? "250");
+
+        Console.Write("Послуги оператора супроводу (грн): ");
+        double opFee = double.Parse(Console.ReadLine() ?? "1000");
+
+        // Обробник події ризику (Observer)
+        EventHandler<string> alertManager = (sender, msg) => 
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\n🚨 [ALERT SYSTEM]: {msg}");
+            Console.ResetColor();
+        };
+
+        // ЗАПУСК РОЗРАХУНКУ
+        FinancialReport report = facade.RunLogisticsCalculation(
+            type, "BC7777CB", 2000, userCargo,
+            "Київ", "Одеса", distance, hours,
+            strategy, driverRate, opFee, alertManager
+        );
+
+        // ВИВЕДЕННЯ ТАБЛИЦІ (SRP)
+        PrintFinancialTable(report);
+
+        Console.WriteLine("\nНатисніть Enter для завершення...");
         Console.ReadLine();
     }
 
-    // Теоретичне обґрунтування для СР 6
-    static void PrintPerformanceTable()
+    static void PrintFinancialTable(FinancialReport r)
     {
-        Console.WriteLine("\n📊 СР 6. Обґрунтування вибору структур даних (.NET Collections):");
-        Console.WriteLine("| Колекція          | Пошук (ID) | Вставка    | Коли використовувати?                     |");
-        Console.WriteLine("|-------------------|------------|------------|-------------------------------------------|");
-        Console.WriteLine("| List<T>           | O(n)       | O(1)       | Для простих переліків та ітерацій        |");
-        Console.WriteLine("| Dictionary<K, V>  | O(1)       | O(1)       | Для швидкого доступу до сутностей за Key |");
-        Console.WriteLine("| HashSet<T>        | O(1)       | O(1)       | Для унікальних записів (напр. унікальні ID)|");
+        Console.WriteLine("\n=====================================================================");
+        Console.WriteLine("📊 ФІНАНСОВИЙ ЗВІТ ПО РЕЙСУ");
+        Console.WriteLine("=====================================================================");
+        Console.WriteLine(string.Format("| {0,-35} | {1,25} |", "Стаття витрат/доходів", "Сума (грн)"));
+        Console.WriteLine("---------------------------------------------------------------------");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(string.Format("| {0,-35} | {1,25:N2} |", "💰 Розрахований Фрахт (Дохід)", r.Revenue));
+        Console.ResetColor();
+        Console.WriteLine(string.Format("| {0,-35} | {1,25:N2} |", "⛽ Паливо", r.FuelCost));
+        Console.WriteLine(string.Format("| {0,-35} | {1,25:N2} |", "🧑‍✈️ Зарплата водія", r.DriverSalary));
+        Console.WriteLine(string.Format("| {0,-35} | {1,25:N2} |", "🎧 Operator підтримки", r.OperatorFee));
+        Console.WriteLine("---------------------------------------------------------------------");
+
+        if (r.IsProfitable)
+        {
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.WriteLine(string.Format("| {0,-35} | {1,25:N2} |", " ЧИСТИЙ ПРИБУТОК КОМПАНІЇ", r.NetProfit));
+            Console.ResetColor();
+            Console.WriteLine("\n📢 РЕЗУЛЬТАТ: Проєкт рентабельний. Запускаємо рейс у роботу.");
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine(string.Format("| {0,-35} | {1,25:N2} |", " ЗБИТОК КОМПАНІЇ", r.NetProfit));
+            Console.ResetColor();
+            Console.WriteLine("\n❌ РЕЗУЛЬТАТ: Заявку відхилено через фінансову недоцільність.");
+        }
+        Console.WriteLine("=====================================================================");
     }
 }

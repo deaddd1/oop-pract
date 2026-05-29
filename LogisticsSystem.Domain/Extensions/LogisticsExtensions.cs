@@ -6,14 +6,14 @@ namespace LogisticsSystem.Domain.Extensions;
 
 public static class LogisticsExtensions
 {
-    // Extension method для швидкої фільтрації важких вантажів
+    // Швидка фільтрація важких вантажів
     public static IEnumerable<Cargo> GetHeavyCargo(this IEnumerable<Cargo> cargos, double minWeight)
     {
         return cargos.Where(c => c.WeightKg >= minWeight);
     }
 
-    // ВИПРАВЛЕНО: Замінено 'var' на чіткий тип для групування LINQ
-    public static IEnumerable<IGrouping<bool, Base.VehicleBase>> GroupVehiclesByLoad(this IEnumerable<Base.VehicleBase> vehicles)
+    // ВИПРАВЛЕНО: Тепер групуємо об'єкти Truck замість старого класу VehicleBase
+    public static IEnumerable<IGrouping<bool, Truck>> GroupVehiclesByLoad(this IEnumerable<Truck> vehicles)
     {
         return from v in vehicles
                group v by v.CurrentLoadKg > 0;
